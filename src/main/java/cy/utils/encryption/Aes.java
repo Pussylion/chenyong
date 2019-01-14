@@ -1,9 +1,9 @@
 package cy.utils.encryption;
 
 /**
- * Aes¼ÓÃÜ
- * 
- * @author:chenYong 2019Äê1ÔÂ14ÈÕ ÏÂÎç11:39:46
+ * AesåŠ å¯†
+ * @author:chenYong
+ * 2019å¹´1æœˆ14æ—¥ ä¸‹åˆ11:42:42
  */
 public class Aes {
 

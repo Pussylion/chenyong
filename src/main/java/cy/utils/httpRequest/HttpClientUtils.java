@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * HttpÇëÇó¹¤¾ß
+ * Httpè¯·æ±‚å·¥å…·
  * 
- * @author:chenYong 2019Äê1ÔÂ14ÈÕ ÏÂÎç10:41:28
+ * @author:chenYong 2019å¹´1æœˆ14æ—¥ ä¸‹åˆ10:41:28
  */
 public class HttpClientUtils {
 	private HttpClientUtils() {
@@ -35,18 +35,18 @@ public class HttpClientUtils {
 	private static Logger logger = LoggerFactory.getLogger(HttpClientUtils.class);
 
 	/**
-	 * ²ÎÊıÎª:json/xmlµÄÇëÇó: contentType: application/json,text/xml
+	 * å‚æ•°ä¸º:json/xmlçš„è¯·æ±‚: contentType: application/json,text/xml
 	 * 
-	 * @author:chenYong 2019Äê1ÔÂ14ÈÕ ÏÂÎç10:58:00
+	 * @author:chenYong 2019å¹´1æœˆ14æ—¥ ä¸‹åˆ10:58:00
 	 */
 	public static String sendJsonRequest(String url, String charSet, int httpTimeout, String jsonStr,
 			String contentType) throws Exception {
-		logger.info(" HttpÇëÇó µØ    Ö· -> {}", url);
-		logger.info(" HttpÇëÇó ×Ö·û¼¯ -> {}", charSet);
-		logger.info(" HttpÇëÇó ÏŞ    Ê± -> {}", httpTimeout);
-		logger.info(" HttpÇëÇó ²Î    Êı -> {}", jsonStr);
+		logger.info(" Httpè¯·æ±‚ åœ°    å€ -> {}", url);
+		logger.info(" Httpè¯·æ±‚ å­—ç¬¦é›† -> {}", charSet);
+		logger.info(" Httpè¯·æ±‚ é™    æ—¶ -> {}", httpTimeout);
+		logger.info(" Httpè¯·æ±‚ å‚    æ•° -> {}", jsonStr);
 		long time = System.currentTimeMillis();
-		// ´ËÎª·ÀÖ¹ÊÇhttpsµÄÇëÇó
+		// æ­¤ä¸ºé˜²æ­¢æ˜¯httpsçš„è¯·æ±‚
 		ProtocolSocketFactory fcty = new MySecureProtocolSocketFactory();
 		Protocol.registerProtocol("https", new Protocol("https", fcty, 443));
 		HttpClient client = new HttpClient();
@@ -54,14 +54,14 @@ public class HttpClientUtils {
 		client.getHttpConnectionManager().getParams().setSoTimeout(httpTimeout);
 		PostMethod method = new PostMethod(url);
 		try {
-			StringRequestEntity entity = new StringRequestEntity(jsonStr, contentType, charSet);// ½â¾öÖĞÎÄÂÒÂëÎÊÌâ
+			StringRequestEntity entity = new StringRequestEntity(jsonStr, contentType, charSet);// è§£å†³ä¸­æ–‡ä¹±ç é—®é¢˜
 			method.setRequestEntity(entity);
 			method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, charSet);
 			int statusCode = client.executeMethod(method);
-			// HttpClient¶ÔÓÚÒªÇó½ÓÊÜºó¼Ì·şÎñµÄÇëÇó£¬ÏñPOSTºÍPUTµÈ²»ÄÜ×Ô¶¯´¦Àí×ª·¢
-			// 301»òÕß302
+			// HttpClientå¯¹äºè¦æ±‚æ¥å—åç»§æœåŠ¡çš„è¯·æ±‚ï¼ŒåƒPOSTå’ŒPUTç­‰ä¸èƒ½è‡ªåŠ¨å¤„ç†è½¬å‘
+			// 301æˆ–è€…302
 			if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
-				// ´ÓÍ·ÖĞÈ¡³ö×ªÏòµÄµØÖ·
+				// ä»å¤´ä¸­å–å‡ºè½¬å‘çš„åœ°å€
 				Header locationHeader = method.getResponseHeader("location");
 				String location = null;
 				if (locationHeader != null) {
@@ -70,7 +70,7 @@ public class HttpClientUtils {
 					method.setRequestEntity(new StringRequestEntity(jsonStr, contentType, charSet));
 					client.executeMethod(method);
 				} else {
-					logger.error(" HttpÇëÇó±¾µØÌø×ªÊ§°ÜÂ·¾¶Îª¿Õ");
+					logger.error(" Httpè¯·æ±‚æœ¬åœ°è·³è½¬å¤±è´¥è·¯å¾„ä¸ºç©º");
 				}
 			}
 		} catch (Exception e) {
@@ -79,34 +79,34 @@ public class HttpClientUtils {
 
 		StatusLine statusLine = method.getStatusLine();
 		if (statusLine.getStatusCode() == 200) {
-			// ´òÓ¡·µ»ØµÄĞÅÏ¢
+			// æ‰“å°è¿”å›çš„ä¿¡æ¯
 			try {
 				String result = method.getResponseBodyAsString();
-				// ÊÍ·ÅÁ¬½Ó
+				// é‡Šæ”¾è¿æ¥
 				method.releaseConnection();
-				logger.info(" HttpÇëÇó ºÄ        Ê± -> {}", (System.currentTimeMillis() - time));
-				logger.info(" HttpÇëÇó Ó¦´ğÄÚÈİ -> {}", result);
+				logger.info(" Httpè¯·æ±‚ è€—        æ—¶ -> {}", (System.currentTimeMillis() - time));
+				logger.info(" Httpè¯·æ±‚ åº”ç­”å†…å®¹ -> {}", result);
 				return result;
 			} catch (Exception e) {
 				throw new Exception(e);
 			}
 		} else {
-			throw new Exception("HttpÏìÓ¦×´Ì¬´íÎó,StatusCode : " + statusLine.getStatusCode());
+			throw new Exception("Httpå“åº”çŠ¶æ€é”™è¯¯,StatusCode : " + statusLine.getStatusCode());
 		}
 
 	}
 
 	/**
-	 * httpÄ£Äâ±íµ¥ÇëÇó
+	 * httpæ¨¡æ‹Ÿè¡¨å•è¯·æ±‚
 	 * 
-	 * @author:chenYong 2019Äê1ÔÂ14ÈÕ ÏÂÎç11:16:44
+	 * @author:chenYong 2019å¹´1æœˆ14æ—¥ ä¸‹åˆ11:16:44
 	 */
 	public static String sendHttpClient(String methodUrl, NameValuePair[] params, String charSet, int httpTimeout)
 			throws Exception {
-		logger.info(" HttpÇëÇó µØ    Ö· -> {}", methodUrl);
-		logger.info(" HttpÇëÇó ×Ö·û¼¯ -> {}", charSet);
-		logger.info(" HttpÇëÇó ÏŞ    Ê± -> {}", httpTimeout);
-		logger.info(" HttpÇëÇó ²Î    Êı -> ");
+		logger.info(" Httpè¯·æ±‚ åœ°    å€ -> {}", methodUrl);
+		logger.info(" Httpè¯·æ±‚ å­—ç¬¦é›† -> {}", charSet);
+		logger.info(" Httpè¯·æ±‚ é™    æ—¶ -> {}", httpTimeout);
+		logger.info(" Httpè¯·æ±‚ å‚    æ•° -> ");
 		logger.info(JSONObject.toJSONString(params));
 		long time = System.currentTimeMillis();
 		ProtocolSocketFactory fcty = new MySecureProtocolSocketFactory();
@@ -119,10 +119,10 @@ public class HttpClientUtils {
 			method.setRequestBody(params);
 			method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, charSet);
 			int statusCode = client.executeMethod(method);
-			// HttpClient¶ÔÓÚÒªÇó½ÓÊÜºó¼Ì·şÎñµÄÇëÇó£¬ÏñPOSTºÍPUTµÈ²»ÄÜ×Ô¶¯´¦Àí×ª·¢
-			// 301»òÕß302
+			// HttpClientå¯¹äºè¦æ±‚æ¥å—åç»§æœåŠ¡çš„è¯·æ±‚ï¼ŒåƒPOSTå’ŒPUTç­‰ä¸èƒ½è‡ªåŠ¨å¤„ç†è½¬å‘
+			// 301æˆ–è€…302
 			if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
-				// ´ÓÍ·ÖĞÈ¡³ö×ªÏòµÄµØÖ·
+				// ä»å¤´ä¸­å–å‡ºè½¬å‘çš„åœ°å€
 				Header locationHeader = method.getResponseHeader("location");
 				String location = null;
 				if (locationHeader != null) {
@@ -131,7 +131,7 @@ public class HttpClientUtils {
 					method.setRequestBody(params);
 					client.executeMethod(method);
 				} else {
-					logger.error(" HttpÇëÇó±¾µØÌø×ªÊ§°ÜÂ·¾¶Îª¿Õ");
+					logger.error(" Httpè¯·æ±‚æœ¬åœ°è·³è½¬å¤±è´¥è·¯å¾„ä¸ºç©º");
 				}
 			}
 		} catch (Exception e) {
@@ -140,42 +140,42 @@ public class HttpClientUtils {
 
 		StatusLine statusLine = method.getStatusLine();
 		if (statusLine.getStatusCode() == 200) {
-			// ´òÓ¡·µ»ØµÄĞÅÏ¢
+			// æ‰“å°è¿”å›çš„ä¿¡æ¯
 			try {
 				String result = method.getResponseBodyAsString();
-				logger.info(" HttpÓ¦´ğ ×Ö·û¼¯ -> {}", method.getResponseCharSet());
-				// ÊÍ·ÅÁ¬½Ó
+				logger.info(" Httpåº”ç­” å­—ç¬¦é›† -> {}", method.getResponseCharSet());
+				// é‡Šæ”¾è¿æ¥
 				method.releaseConnection();
-				logger.info(" HttpÇëÇó ºÄ        Ê± -> {}", (System.currentTimeMillis() - time));
-				logger.info(" HttpÇëÇó Ó¦´ğÄÚÈİ -> {}", result);
+				logger.info(" Httpè¯·æ±‚ è€—        æ—¶ -> {}", (System.currentTimeMillis() - time));
+				logger.info(" Httpè¯·æ±‚ åº”ç­”å†…å®¹ -> {}", result);
 				return result;
 			} catch (Exception e) {
 				throw new Exception(e);
 			}
 		} else {
-			throw new Exception("HttpÏìÓ¦×´Ì¬´íÎó,StatusCode : " + statusLine.getStatusCode());
+			throw new Exception("Httpå“åº”çŠ¶æ€é”™è¯¯,StatusCode : " + statusLine.getStatusCode());
 		}
 
 	}
 
 	/**
-	 * º¬¸½¼şµÄÇëÇó·½Ê½
+	 * å«é™„ä»¶çš„è¯·æ±‚æ–¹å¼
 	 * 
-	 * @author:chenYong 2019Äê1ÔÂ14ÈÕ ÏÂÎç11:25:54
+	 * @author:chenYong 2019å¹´1æœˆ14æ—¥ ä¸‹åˆ11:25:54
 	 */
 	public static String sendHttpClientMultipartFormData(String methodUrl, Map<String, Object> data, String charset,
 			int httpTimeout) throws Exception {
-		logger.info(" HttpÇëÇó µØ    Ö· -> {}", methodUrl);
-		logger.info(" HttpÇëÇó ×Ö·û¼¯ -> {}", charset);
-		logger.info(" HttpÇëÇó ÏŞ    Ê± -> {}", httpTimeout);
-		logger.info(" HttpÇëÇó ²Î    Êı -> ");
+		logger.info(" Httpè¯·æ±‚ åœ°    å€ -> {}", methodUrl);
+		logger.info(" Httpè¯·æ±‚ å­—ç¬¦é›† -> {}", charset);
+		logger.info(" Httpè¯·æ±‚ é™    æ—¶ -> {}", httpTimeout);
+		logger.info(" Httpè¯·æ±‚ å‚    æ•° -> ");
 		long time = System.currentTimeMillis();
 		ProtocolSocketFactory fcty = new MySecureProtocolSocketFactory();
 		Protocol.registerProtocol("https", new Protocol("https", fcty, 443));
 		HttpClient client = new HttpClient();
 		client.getHttpConnectionManager().getParams().setConnectionTimeout(httpTimeout);
 		client.getHttpConnectionManager().getParams().setSoTimeout(httpTimeout);
-		// Ê¹ÓÃ GET ·½·¨ £¬Èç¹û·şÎñÆ÷ĞèÒªÍ¨¹ı HTTPS Á¬½Ó£¬ÄÇÖ»ĞèÒª½«ÏÂÃæ URL ÖĞµÄ http »»³É https
+		// ä½¿ç”¨ GET æ–¹æ³• ï¼Œå¦‚æœæœåŠ¡å™¨éœ€è¦é€šè¿‡ HTTPS è¿æ¥ï¼Œé‚£åªéœ€è¦å°†ä¸‹é¢ URL ä¸­çš„ http æ¢æˆ https
 		PostMethod postMethod = new PostMethod(methodUrl);
 		try {
 			Part[] parts = new Part[data.size()];
@@ -189,7 +189,7 @@ public class HttpClientUtils {
 					stringPart.setContentType(null);
 					parts[index] = stringPart;
 				} else {
-					logger.error("Î´ÖªµÄ±¨ÎÄĞÅÏ¢£º" + part.getValue());
+					logger.error("æœªçŸ¥çš„æŠ¥æ–‡ä¿¡æ¯ï¼š" + part.getValue());
 				}
 				index++;
 			}
@@ -203,20 +203,20 @@ public class HttpClientUtils {
 
 		StatusLine statusLine = postMethod.getStatusLine();
 		if (statusLine.getStatusCode() == 200) {
-			// ´òÓ¡·µ»ØµÄĞÅÏ¢
+			// æ‰“å°è¿”å›çš„ä¿¡æ¯
 			try {
 				String result = postMethod.getResponseBodyAsString();
-				logger.info(" HttpÓ¦´ğ ×Ö·û¼¯ -> {}", postMethod.getResponseCharSet());
-				// ÊÍ·ÅÁ¬½Ó
+				logger.info(" Httpåº”ç­” å­—ç¬¦é›† -> {}", postMethod.getResponseCharSet());
+				// é‡Šæ”¾è¿æ¥
 				postMethod.releaseConnection();
-				logger.info(" HttpÇëÇó ºÄ        Ê± -> {}", (System.currentTimeMillis() - time));
-				logger.info(" HttpÇëÇó Ó¦´ğÄÚÈİ -> {}", result);
+				logger.info(" Httpè¯·æ±‚ è€—        æ—¶ -> {}", (System.currentTimeMillis() - time));
+				logger.info(" Httpè¯·æ±‚ åº”ç­”å†…å®¹ -> {}", result);
 				return result;
 			} catch (Exception e) {
 				throw new Exception(e);
 			}
 		} else {
-			throw new Exception("HttpÏìÓ¦×´Ì¬´íÎó,StatusCode : " + statusLine.getStatusCode());
+			throw new Exception("Httpå“åº”çŠ¶æ€é”™è¯¯,StatusCode : " + statusLine.getStatusCode());
 		}
 
 	}

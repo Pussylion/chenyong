@@ -1,2 +1,2 @@
-1:cy.utils.httpRequest====>http请求工具
-2:cy.utils.encryption=====>加密工具
+1:cy.utils.httpRequest====>http璇锋眰宸ュ叿
+2:cy.utils.encryption=====>鍔犲瘑
