@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * Http工具
+ * Http请求工具
  * 
  * @author:chenYong 2019年1月14日 下午10:41:28
  */
@@ -159,7 +159,7 @@ public class HttpClientUtils {
 	}
 
 	/**
-	 * 含义附件的请求方式
+	 * 含附件的请求方式
 	 * 
 	 * @author:chenYong 2019年1月14日 下午11:25:54
 	 */
